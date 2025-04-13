@@ -12,7 +12,7 @@ API RESTful desenvolvida em Laravel 12, voltada para o gerenciamento de tarefas,
 
 ## 🔧 **Tecnologias Utilizadas**
 
-- **Laravel 8**: Framework PHP robusto para construir APIs.
+- **Laravel 12**: Framework PHP robusto para construir APIs.
 - **SQLITE**: Banco de dados relacional para armazenar informações de usuários e tarefas.
 - **JWT / Sanctum**: Autenticação segura baseada em token para garantir que apenas usuários autenticados possam acessar rotas protegidas.
 
