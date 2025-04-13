@@ -22,7 +22,7 @@ Para começar a usar esta API em seu projeto, siga as etapas abaixo:
 
 ### **Pré-requisitos**
 
-- PHP >= 7.4
+- PHP >= 8.0
 - Composer
 - Laravel 12.x
 
