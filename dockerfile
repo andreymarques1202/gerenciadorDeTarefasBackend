@@ -1,31 +1,23 @@
-FROM php:8.2-apache
+# ...
 
-# Instala extensões necessárias
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    libsqlite3-dev \
-    pkg-config \
-    zip unzip git curl \
-    && docker-php-ext-install pdo pdo_sqlite zip
-
-# Habilita mod_rewrite do Apache
-RUN a2enmod rewrite
-
-# Copia o Composer do container oficial
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copia o código do projeto
+# Copia o projeto
 COPY . /var/www/html/
 
-# Define o diretório de trabalho
+# Define o diretório de trabalho como a pasta 'public'
 WORKDIR /var/www/html
+
+# Aponta o Apache para a pasta 'public'
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
+
+# Habilita mod_rewrite e reinicia Apache
+RUN a2enmod rewrite
 
 # Permissões e dependências
 RUN composer install --no-dev --optimize-autoloader && \
     chmod -R 755 /var/www/html && \
     chown -R www-data:www-data /var/www/html
 
-# Cria o arquivo .env, configura chave e cache
+# Gera a chave e configura cache
 RUN cp .env.example .env && \
     php artisan key:generate && \
     php artisan config:cache
