@@ -1,41 +1,34 @@
 FROM php:8.2-apache
 
-# Instala dependências
+# Instala extensões necessárias
 RUN apt-get update && apt-get install -y \
-    libzip-dev libonig-dev libxml2-dev \
-    zip unzip git curl libsqlite3-dev \
+    libzip-dev \
+    libsqlite3-dev \
+    pkg-config \
+    zip unzip git curl \
     && docker-php-ext-install pdo pdo_sqlite zip
-
-# Instala Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Habilita mod_rewrite do Apache
 RUN a2enmod rewrite
 
-# Aponta o DocumentRoot para o diretório public do Laravel
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+# Copia o Composer do container oficial
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Define diretório de trabalho
+# Copia o código do projeto
+COPY . /var/www/html/
+
+# Define o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copia o projeto
-COPY . .
+# Permissões e dependências
+RUN composer install --no-dev --optimize-autoloader && \
+    chmod -R 755 /var/www/html && \
+    chown -R www-data:www-data /var/www/html
 
-# Instala dependências do Laravel
-RUN composer install --no-dev --optimize-autoloader
+# Cria o arquivo .env, configura chave e cache
+RUN cp .env.example .env && \
+    php artisan key:generate && \
+    php artisan config:cache
 
-# Permissões e cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Gera chave e cache (vai falhar se não houver .env, mas tudo bem no Render)
-RUN php artisan key:generate || true && \
-    php artisan config:cache || true && \
-    php artisan route:cache || true && \
-    php artisan view:cache || true
-
-# Expõe a porta 80
+# Expondo a porta do Apache
 EXPOSE 80
-
-# Inicia o Apache
-CMD ["apache2-foreground"]
