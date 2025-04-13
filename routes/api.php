@@ -5,6 +5,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+Route::get("/test", function () {
+    return response()->json(["message" => "teste de api ok"]);
+});
+
 Route::post("/login", [UserController::class, "Login"]);
 Route::post("/register", [UserController::class, "Register"]);
 Route::middleware('auth:sanctum')->group(function() {
