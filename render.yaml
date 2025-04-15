@@ -8,7 +8,5 @@ services:
     envVars:
       - key: APP_ENV
         value: production
-      - key: APP_KEY
-        value: COLA_AQUI_O_APP_KEY
       - key: APP_DEBUG
         value: false
