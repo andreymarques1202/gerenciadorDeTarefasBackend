@@ -29,8 +29,9 @@ RUN chown -R www-data:www-data /var/www/html && \
     touch /var/www/html/database/database.sqlite && \
     chmod -R 775 /var/www/html/database && \
     php artisan key:generate && \
-    php artisan config:cache
+    php artisan config:cache && \
     chmod -R 775 storage bootstrap/cache
+
 
 
 # Expõe a porta
