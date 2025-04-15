@@ -17,6 +17,8 @@ Route::middleware('auth:sanctum')->group(function() {
         return response()->json(Auth::user());
     });
 
+    Route::put('/user', [UserController::class, 'update']);
+
     Route::put('/user/password', [UserController::class, 'updatePassword']);
 
     
